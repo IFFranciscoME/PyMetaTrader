@@ -1,0 +1,21 @@
+
+# -- --------------------------------------------------------------------------------------------------- -- #
+# -- project: A SHORT DESCRIPTION OF THE PROJECT                                                         -- #
+# -- script: requirements.txt : text file with the required libraries for the project                    -- #
+# -- author: YOUR GITHUB USER NAME                                                                       -- #
+# -- license: GPL-3.0 License                                                                            -- #
+# -- repository: YOUR REPOSITORY URL                                                                     -- #
+# -- --------------------------------------------------------------------------------------------------- -- #
+
+# basic
+pandas>=1.1.0
+numpy>=1.19.1
+
+# visualization
+jupyter>=1.0.0
+ipykernel
+chart_studio>=1.1
+plotly>=4.14
+
+# data and processing
+MetaTrader5==5.0.34

@@ -1,3 +1,24 @@
+
+# ------------------------- Added manually ------------------------ #
+# ----------------------------------------------------------------- #
+
+# -- Exclude pycharm project folder
+.idea/
+
+# -- Exclude vscode settings folder
+.vscode/
+
+# -- Exclude vscode workspace files
+python_metatrader5_aws-windows.code-workspace
+python_metatrader5_t490.code-workspace
+
+# -- Exclude virtual environment folders
+python_metatrader5_aws-windows_venv/
+python_metatrader5_t490_venv/
+
+# ----------------------------------------------------------------- #
+# ----------------------------------------------------------------- #
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
