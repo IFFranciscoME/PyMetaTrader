@@ -161,41 +161,49 @@ def f_hist_trades(param_ct, param_ini, param_end):
 
     # historical deals of the account
     df_deals = pd.DataFrame(list(history_deals), columns=history_deals[0]._asdict().keys())
-    
+
     # historical orders of the account
     df_orders = pd.DataFrame(list(history_orders), columns=history_orders[0]._asdict().keys())
-   
+
     # useful columns from orders
     df_hist_trades = df_orders[['time_setup', 'symbol', 'position_id', 'type', 'volume_current',
-                           'price_open', 'sl', 'tp']]
+                                'price_open', 'sl', 'tp']]
 
-    # rename columns 
+    # useful columns from deals
+    df_deals_hist = df_deals[['position_id', 'type', 'price', 'volume']]
+
+    # rename columns
     df_hist_trades.columns = ['OpenTime', 'Symbol', 'Ticket', 'Type', 'Volume', 'OpenPrice', 'S/L', 'T/P']
+    df_deals_hist.columns = ['Ticket', 'Type', 'Price', 'Volume']
 
     # choose only buy or sell transactions (ignore all the rest, like balance ...)
     df_hist_trades = df_hist_trades[(df_hist_trades['Type'] == 0) | (df_hist_trades['Type'] == 1)]
+    df_deals_hist = df_deals_hist[(df_deals_hist['Type'] == 0) | (df_deals_hist['Type'] == 1)]
     df_hist_trades['OpenTime'] = pd.to_datetime(df_hist_trades['OpenTime'], unit='s')
-    
+
     # unique values for position_id
     uni_id = df_hist_trades['Ticket'].unique()
-    
-    # first and last index for every unique value of position_id
-    ind_opens = [df_hist_trades.index[df_hist_trades['Ticket'] == i][0] for i in uni_id]
-    ind_closes = [df_hist_trades.index[df_hist_trades['Ticket'] == i][-1] for i in uni_id]
-    
-    # generate lists with values to add
-    cts = df_hist_trades['OpenTime'].loc[ind_closes]
-    cps = df_hist_trades['OpenPrice'].loc[ind_closes]
 
+    # first and last index for every unique value of position_id
+    ind_profloss = [df_hist_trades.index[df_hist_trades['Ticket'] == i][0] for i in uni_id]
+    ind_open = [df_deals_hist.index[df_deals_hist['Ticket'] == i][0] for i in uni_id]
+    ind_close = [df_deals_hist.index[df_deals_hist['Ticket'] == i][-1] for i in uni_id]
+
+    # generate lists with values to add
+    cts = df_hist_trades['OpenTime'].loc[ind_open]
+    ops = df_deals_hist['Price'].loc[ind_open]
+    cps = df_deals_hist['Price'].loc[ind_close]
+    vol = df_deals_hist['Volume'].loc[ind_close]
     # resize dataframe to have only the first value of every unique position_id
-    df_hist_trades = df_hist_trades.loc[ind_opens]
+    df_hist_trades = df_hist_trades.loc[ind_profloss]
 
     # add close time and close price as a column to dataframe
     df_hist_trades['CloseTime'] = cts.to_list()
+    df_hist_trades['OpenPrice'] = ops.to_list()
     df_hist_trades['ClosePrice'] = cps.to_list()
-    df_hist_trades['Profit'] = df_deals['profit'].loc[df_deals['position_id'].isin(uni_id) & 
+    df_hist_trades['Volume'] = vol.to_list()
+    df_hist_trades['Profit'] = df_deals['profit'].loc[df_deals['position_id'].isin(uni_id) &
                                                       df_deals['entry'] == 1].to_list()
-  
     return df_hist_trades
 
 # ------------------------------------------------------------------------------- MT5: HISTORICAL PRICES -- #
